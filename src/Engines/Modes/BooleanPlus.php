@@ -11,8 +11,13 @@ class BooleanPlus extends Mode
         $queryString = '';
         
         $queryString .= $this->buildWheres($builder);
+        if (!empty($builder->model->mysql_searchable)) {
+            $indexFields = $builder->model->mysql_searchable;
+        } else {
+            $indexFields = $this->modelService->setModel($builder->model)->getFullTextIndexFields();
+        }
         
-        $indexFields = implode(',',  $this->modelService->setModel($builder->model)->getFullTextIndexFields());
+        $indexFields = implode(',', $indexFields );
         
         $queryString .= "MATCH($indexFields) AGAINST(? IN BOOLEAN MODE)";
         
@@ -52,6 +57,6 @@ class BooleanPlus extends Mode
     
     public function isFullText()
     {
-        return true;
+        return false;
     }
 }
