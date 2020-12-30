@@ -74,7 +74,9 @@ class MySQLEngine extends Engine
             $query = call_user_func($builder->callback, $query, $this);
         }
 
-        $result['count'] = $query->count();
+        if (!config('scout.mysql.ignore_count')) {
+            $result['count'] = $query->count();
+        }
 
         if (property_exists($builder, 'orders') && !empty($builder->orders)) {
             foreach ($builder->orders as $order) {
